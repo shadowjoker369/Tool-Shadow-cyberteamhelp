@@ -1,240 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🛠️ Shadow Toolbox</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
     body {
+      margin: 0;
+      font-family: 'Courier New', monospace;
       background: black;
-      color: #00ff99;
-      font-family: 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+      color: #00ffea;
       overflow-x: hidden;
     }
-
-    canvas {
+    h1, h2 {
+      text-align: center;
+      text-shadow: 0 0 10px #00ffff;
+    }
+    .tool {
+      background: #111;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #0ff;
+    }
+    textarea, input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: #222;
+      border: 1px solid #0ff;
+      color: #0ff;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      background: #0ff;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #00cccc;
+    }
+    canvas#matrix {
       position: fixed;
       top: 0;
       left: 0;
       z-index: -1;
     }
-
-    h1 {
-      text-align: center;
-      padding: 20px;
-      color: #0ff;
-      text-shadow: 0 0 10px #0ff;
-    }
-
-    .container {
-      padding: 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-    }
-
-    .tool {
-      background: rgba(0, 255, 0, 0.1);
-      border: 1px solid #00ff00;
-      padding: 20px;
-      border-radius: 10px;
-      backdrop-filter: blur(4px);
-      box-shadow: 0 0 20px #00ff99;
-      color: #fff;
-    }
-
-    textarea, input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      background: black;
-      color: #0f0;
-      border: 1px solid #0f0;
-    }
-
-    button {
-      margin-top: 10px;
-      padding: 10px;
-      background: #0f0;
-      color: black;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    button:hover {
-      background: #fff;
-      color: black;
-    }
   </style>
 </head>
 <body>
-<canvas id="matrix"></canvas>
-<h1>🛠️ SHADOW TOOLBOX ⚔️</h1>
-<div class="container">
-
-  <!-- Base64 Tool -->
-  <div class="tool">
-    <h3>🔐 Base64 Encoder / Decoder</h3>
-    <textarea id="base64-input" placeholder="Enter text"></textarea>
-    <button onclick="encodeBase64()">Encode</button>
-    <button onclick="decodeBase64()">Decode</button>
-    <textarea id="base64-output" readonly></textarea>
-  </div>
-
-  <!-- Caesar Cipher -->
-  <div class="tool">
-    <h3>🔒 Caesar Cipher</h3>
-    <textarea id="caesar-input" placeholder="Enter text"></textarea>
-    <input type="number" id="caesar-shift" value="3" />
-    <button onclick="encryptCaesar()">Encrypt</button>
-    <button onclick="decryptCaesar()">Decrypt</button>
-    <textarea id="caesar-output" readonly></textarea>
-  </div>
-
-  <!-- Stopwatch -->
-  <div class="tool">
-    <h3>⏱️ Stopwatch</h3>
-    <div id="stopwatch">00:00:00</div>
-    <button onclick="startStopwatch()">Start</button>
-    <button onclick="stopStopwatch()">Stop</button>
-    <button onclick="resetStopwatch()">Reset</button>
-  </div>
-
-  <!-- Pomodoro Timer -->
-  <div class="tool">
-    <h3>🍅 Pomodoro Timer</h3>
-    <div id="pomodoro">25:00</div>
-    <button onclick="startPomodoro()">Start</button>
-    <button onclick="resetPomodoro()">Reset</button>
-  </div>
-
-  <!-- Binary Converter -->
-  <div class="tool">
-    <h3>🧠 Text to Binary</h3>
-    <textarea id="binary-input" placeholder="Enter text"></textarea>
-    <button onclick="convertToBinary()">Convert</button>
-    <textarea id="binary-output" readonly></textarea>
-  </div>
-
-</div>
-
-<script>
-  // Matrix background animation
-  const canvas = document.getElementById('matrix');
-  const ctx = canvas.getContext('2d');
-  canvas.height = window.innerHeight;
-  canvas.width = window.innerWidth;
-  const letters = '01';
-  const fontSize = 14;
-  const columns = canvas.width / fontSize;
-  const drops = Array(Math.floor(columns)).fill(1);
-
-  function draw() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#0F0';
-    ctx.font = fontSize + 'px monospace';
-    for (let i = 0; i < drops.length; i++) {
-      const text = letters[Math.floor(Math.random() * letters.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
+  <canvas id="matrix"></canvas>
+  <h1>🛠️ Shadow Toolbox</h1>  <div class="tool">
+    <h2>🎯 Password Generator</h2>
+    <input type="number" id="passLength" value="12" placeholder="Password Length" />
+    <button onclick="generatePassword()">Generate</button>
+    <textarea id="passwordOutput" rows="2"></textarea>
+  </div>  <div class="tool">
+    <h2>📁 File to Base64 Converter</h2>
+    <input type="file" id="fileInput" />
+    <button onclick="convertToBase64()">Convert</button>
+    <textarea id="base64Output" rows="6"></textarea>
+  </div>  <div class="tool">
+    <h2>🔍 IP Info Lookup</h2>
+    <button onclick="getIPInfo()">Get My IP Info</button>
+    <pre id="ipInfo"></pre>
+  </div>  <div class="tool">
+    <h2>🎤 Speech to Text</h2>
+    <button onclick="startDictation()">🎙️ Start Speaking</button>
+    <textarea id="speechOutput" rows="4"></textarea>
+  </div>  <div class="tool">
+    <h2>🛰️ GPS Geo Tracker</h2>
+    <button onclick="getGeoLocation()">📍 Get Location</button>
+    <pre id="geoLocation"></pre>
+  </div>  <div class="tool">
+    <h2>🧪 Text Analysis Tool</h2>
+    <textarea id="textInput" rows="4" placeholder="Type something..."></textarea>
+    <button onclick="analyzeText()">Analyze</button>
+    <pre id="textResult"></pre>
+  </div>  <script>
+    // Matrix Effect
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    const chars = '01'.split('');
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#0f0';
+      ctx.font = fontSize + 'px monospace';
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
     }
-  }
+    setInterval(drawMatrix, 33);
 
-  setInterval(draw, 33);
+    // Password Generator
+    function generatePassword() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!';
+      const length = document.getElementById('passLength').value;
+      let password = '';
+      for (let i = 0; i < length; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      document.getElementById('passwordOutput').value = password;
+    }
 
-  // Base64 functions
-  function encodeBase64() {
-    const input = document.getElementById("base64-input").value;
-    document.getElementById("base64-output").value = btoa(input);
-  }
+    // File to Base64
+    function convertToBase64() {
+      const file = document.getElementById('fileInput').files[0];
+      const reader = new FileReader();
+      reader.onload = () => document.getElementById('base64Output').value = reader.result;
+      reader.readAsDataURL(file);
+    }
 
-  function decodeBase64() {
-    const input = document.getElementById("base64-input").value;
-    document.getElementById("base64-output").value = atob(input);
-  }
+    // IP Info Lookup
+    async function getIPInfo() {
+      const res = await fetch('https://ipapi.co/json/');
+      const data = await res.json();
+      document.getElementById('ipInfo').textContent = JSON.stringify(data, null, 2);
+    }
 
-  // Caesar Cipher
-  function encryptCaesar() {
-    const text = document.getElementById("caesar-input").value;
-    const shift = parseInt(document.getElementById("caesar-shift").value);
-    const result = text.split('').map(char => {
-      let code = char.charCodeAt(0);
-      if (code >= 65 && code <= 90) return String.fromCharCode(((code - 65 + shift) % 26) + 65);
-      else if (code >= 97 && code <= 122) return String.fromCharCode(((code - 97 + shift) % 26) + 97);
-      return char;
-    }).join('');
-    document.getElementById("caesar-output").value = result;
-  }
+    // Speech to Text
+    function startDictation() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.onresult = (event) => {
+        document.getElementById('speechOutput').value = event.results[0][0].transcript;
+      };
+      recognition.start();
+    }
 
-  function decryptCaesar() {
-    const text = document.getElementById("caesar-input").value;
-    const shift = parseInt(document.getElementById("caesar-shift").value);
-    const result = text.split('').map(char => {
-      let code = char.charCodeAt(0);
-      if (code >= 65 && code <= 90) return String.fromCharCode(((code - 65 - shift + 26) % 26) + 65);
-      else if (code >= 97 && code <= 122) return String.fromCharCode(((code - 97 - shift + 26) % 26) + 97);
-      return char;
-    }).join('');
-    document.getElementById("caesar-output").value = result;
-  }
+    // GPS Geo Tracker
+    function getGeoLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((pos) => {
+          const coords = pos.coords;
+          document.getElementById('geoLocation').textContent = `Latitude: ${coords.latitude}\nLongitude: ${coords.longitude}`;
+        });
+      } else {
+        alert('Geolocation is not supported.');
+      }
+    }
 
-  // Stopwatch
-  let stopwatchInterval, seconds = 0;
-  function startStopwatch() {
-    if (stopwatchInterval) return;
-    stopwatchInterval = setInterval(() => {
-      seconds++;
-      const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
-      const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
-      const s = String(seconds % 60).padStart(2, '0');
-      document.getElementById("stopwatch").textContent = `${h}:${m}:${s}`;
-    }, 1000);
-  }
-
-  function stopStopwatch() {
-    clearInterval(stopwatchInterval);
-    stopwatchInterval = null;
-  }
-
-  function resetStopwatch() {
-    stopStopwatch();
-    seconds = 0;
-    document.getElementById("stopwatch").textContent = '00:00:00';
-  }
-
-  // Pomodoro Timer
-  let pomodoroInterval, pomodoroSeconds = 1500;
-  function startPomodoro() {
-    if (pomodoroInterval) return;
-    pomodoroInterval = setInterval(() => {
-      if (pomodoroSeconds > 0) pomodoroSeconds--;
-      const m = String(Math.floor(pomodoroSeconds / 60)).padStart(2, '0');
-      const s = String(pomodoroSeconds % 60).padStart(2, '0');
-      document.getElementById("pomodoro").textContent = `${m}:${s}`;
-    }, 1000);
-  }
-
-  function resetPomodoro() {
-    clearInterval(pomodoroInterval);
-    pomodoroInterval = null;
-    pomodoroSeconds = 1500;
-    document.getElementById("pomodoro").textContent = "25:00";
-  }
-
-  // Binary converter
-  function convertToBinary() {
-    const input = document.getElementById("binary-input").value;
-    const binary = input.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
-    document.getElementById("binary-output").value = binary;
-  }
-</script>
-</body>
+    // Text Analysis
+    function analyzeText() {
+      const text = document.getElementById('textInput').value;
+      const wordCount = text.trim().split(/\s+/).length;
+      const language = /[\u0980-\u09FF]/.test(text) ? 'Bengali' : 'English';
+      const emotion = /happy|joy|love|awesome|great/i.test(text) ? '😊 Positive' : /sad|angry|bad|hate/i.test(text) ? '😞 Negative' : '😐 Neutral';
+      document.getElementById('textResult').textContent = `Language: ${language}\nWords: ${wordCount}\nEmotion: ${emotion}`;
+    }
+  </script></body>
 </html>
