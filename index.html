@@ -1,214 +1,240 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> Shadow Toolbox</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🛠️ Shadow Toolbox</title>
   <style>
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
     body {
-      background: radial-gradient(circle, #000000 0%, #0a0a0a 100%);
-      color: #00ffea;
-      font-family: 'Courier New', Courier, monospace;
-      margin: 0;
-      padding: 20px;
+      background: black;
+      color: #00ff99;
+      font-family: 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+      overflow-x: hidden;
     }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
     h1 {
       text-align: center;
-      font-size: 2.5em;
-      color: #0ff;
-      text-shadow: 0 0 5px #0ff, 0 0 20px #00f;
-      animation: glow 2s infinite alternate;
-    }
-    @keyframes glow {
-      from { text-shadow: 0 0 5px #0ff; }
-      to { text-shadow: 0 0 20px #0ff, 0 0 30px #00f; }
-    }
-    .tool {
-      border: 2px solid #00ffea;
-      background-color: #111;
-      margin: 20px auto;
       padding: 20px;
-      border-radius: 10px;
-      max-width: 800px;
-      box-shadow: 0 0 15px #00ffea;
-    }
-    .tool h2 {
+      color: #0ff;
       text-shadow: 0 0 10px #0ff;
     }
-    button, input, textarea, select {
-      background-color: #000;
-      color: #0ff;
-      border: 1px solid #00ffea;
-      padding: 10px;
-      margin: 10px 0;
-      width: 100%;
-      font-family: monospace;
+
+    .container {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
     }
-    .icon {
-      font-size: 1.5em;
-      margin-right: 10px;
-      filter: drop-shadow(0 0 5px #0ff);
+
+    .tool {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid #00ff00;
+      padding: 20px;
+      border-radius: 10px;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 0 20px #00ff99;
+      color: #fff;
+    }
+
+    textarea, input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: black;
+      color: #0f0;
+      border: 1px solid #0f0;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      background: #0f0;
+      color: black;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #fff;
+      color: black;
     }
   </style>
 </head>
 <body>
-  <h1> SHADOW TOOLBOX</h1>  <div class="tool">
-    <h2><span class="icon"></span>Password Generator</h2>
-    <button onclick="generatePassword()">Generate Password</button>
-    <input type="text" id="passwordOutput" readonly>
-  </div>  <div class="tool">
-    <h2><span class="icon"></span>Quick Notes</h2>
-    <textarea id="noteInput" rows="5"></textarea>
-    <button onclick="saveNote()">Save Note</button>
-    <div id="noteDisplay"></div>
-  </div>  <div class="tool">
-    <h2><span class="icon"></span>Age Calculator</h2>
-    <input type="date" id="dob">
-    <button onclick="calculateAge()">Calculate Age</button>
-    <div id="ageResult"></div>
-  </div>  <div class="tool">
-    <h2><span class="icon"></span>User Agent Info</h2>
-    <p id="userAgent"></p>
-  </div>  <div class="tool">
-    <h2><span class="icon"></span>Quote Generator</h2>
-    <button onclick="showQuote()">Show Quote</button>
-    <p id="quoteDisplay"></p>
-  </div>  <div class="tool">
-    <h2><span class="icon"></span>Base64 Encoder / Decoder</h2>
-    <textarea id="b64Input" rows="4" placeholder="Enter text..."></textarea>
+<canvas id="matrix"></canvas>
+<h1>🛠️ SHADOW TOOLBOX ⚔️</h1>
+<div class="container">
+
+  <!-- Base64 Tool -->
+  <div class="tool">
+    <h3>🔐 Base64 Encoder / Decoder</h3>
+    <textarea id="base64-input" placeholder="Enter text"></textarea>
     <button onclick="encodeBase64()">Encode</button>
     <button onclick="decodeBase64()">Decode</button>
-    <p id="b64Result"></p>
-  </div>  <div class="tool">
-    <h2><span class="icon"></span>Text Encrypt / Decrypt (Caesar Cipher)</h2>
-    <textarea id="cipherText" rows="4"></textarea>
-    <input type="number" id="cipherShift" placeholder="Shift value">
-    <button onclick="encryptText()">Encrypt</button>
-    <button onclick="decryptText()">Decrypt</button>
-    <p id="cipherResult"></p>
-  </div>  <div class="tool">
-    <h2><span class="icon"></span>Stopwatch</h2>
+    <textarea id="base64-output" readonly></textarea>
+  </div>
+
+  <!-- Caesar Cipher -->
+  <div class="tool">
+    <h3>🔒 Caesar Cipher</h3>
+    <textarea id="caesar-input" placeholder="Enter text"></textarea>
+    <input type="number" id="caesar-shift" value="3" />
+    <button onclick="encryptCaesar()">Encrypt</button>
+    <button onclick="decryptCaesar()">Decrypt</button>
+    <textarea id="caesar-output" readonly></textarea>
+  </div>
+
+  <!-- Stopwatch -->
+  <div class="tool">
+    <h3>⏱️ Stopwatch</h3>
     <div id="stopwatch">00:00:00</div>
     <button onclick="startStopwatch()">Start</button>
     <button onclick="stopStopwatch()">Stop</button>
     <button onclick="resetStopwatch()">Reset</button>
-  </div>  <div class="tool">
-    <h2><span class="icon"></span>Pomodoro Timer</h2>
+  </div>
+
+  <!-- Pomodoro Timer -->
+  <div class="tool">
+    <h3>🍅 Pomodoro Timer</h3>
     <div id="pomodoro">25:00</div>
     <button onclick="startPomodoro()">Start</button>
     <button onclick="resetPomodoro()">Reset</button>
-  </div>  <div class="tool">
-    <h2><span class="icon"></span>Text to Binary Converter</h2>
-    <textarea id="binaryText" rows="4" placeholder="Enter text..."></textarea>
-    <button onclick="textToBinary()">Convert to Binary</button>
-    <p id="binaryResult"></p>
-  </div>  <script>
-    function generatePassword() {
-      const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
-      let pass = "";
-      for (let i = 0; i < 12; i++) pass += chars[Math.floor(Math.random() * chars.length)];
-      document.getElementById("passwordOutput").value = pass;
-    }
+  </div>
 
-    function saveNote() {
-      const note = document.getElementById("noteInput").value;
-      localStorage.setItem("note", note);
-      document.getElementById("noteDisplay").innerText = "Saved: " + note;
-    }
+  <!-- Binary Converter -->
+  <div class="tool">
+    <h3>🧠 Text to Binary</h3>
+    <textarea id="binary-input" placeholder="Enter text"></textarea>
+    <button onclick="convertToBinary()">Convert</button>
+    <textarea id="binary-output" readonly></textarea>
+  </div>
 
-    function calculateAge() {
-      const dob = new Date(document.getElementById("dob").value);
-      const today = new Date();
-      let age = today.getFullYear() - dob.getFullYear();
-      const m = today.getMonth() - dob.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-      document.getElementById("ageResult").innerText = "Your age is: " + age;
-    }
+</div>
 
-    function encodeBase64() {
-      const input = document.getElementById("b64Input").value;
-      document.getElementById("b64Result").innerText = btoa(input);
-    }
+<script>
+  // Matrix background animation
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  const letters = '01';
+  const fontSize = 14;
+  const columns = canvas.width / fontSize;
+  const drops = Array(Math.floor(columns)).fill(1);
 
-    function decodeBase64() {
-      const input = document.getElementById("b64Input").value;
-      document.getElementById("b64Result").innerText = atob(input);
+  function draw() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0F0';
+    ctx.font = fontSize + 'px monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const text = letters[Math.floor(Math.random() * letters.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
     }
+  }
 
-    function encryptText() {
-      const text = document.getElementById("cipherText").value;
-      const shift = parseInt(document.getElementById("cipherShift").value);
-      const result = text.split('').map(c => String.fromCharCode(c.charCodeAt(0) + shift)).join('');
-      document.getElementById("cipherResult").innerText = result;
-    }
+  setInterval(draw, 33);
 
-    function decryptText() {
-      const text = document.getElementById("cipherText").value;
-      const shift = parseInt(document.getElementById("cipherShift").value);
-      const result = text.split('').map(c => String.fromCharCode(c.charCodeAt(0) - shift)).join('');
-      document.getElementById("cipherResult").innerText = result;
-    }
+  // Base64 functions
+  function encodeBase64() {
+    const input = document.getElementById("base64-input").value;
+    document.getElementById("base64-output").value = btoa(input);
+  }
 
-    let stopwatchInterval, totalSeconds = 0;
-    function startStopwatch() {
-      clearInterval(stopwatchInterval);
-      stopwatchInterval = setInterval(() => {
-        totalSeconds++;
-        const hrs = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-        const mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-        const secs = String(totalSeconds % 60).padStart(2, '0');
-        document.getElementById("stopwatch").innerText = `${hrs}:${mins}:${secs}`;
-      }, 1000);
-    }
-    function stopStopwatch() { clearInterval(stopwatchInterval); }
-    function resetStopwatch() {
-      clearInterval(stopwatchInterval);
-      totalSeconds = 0;
-      document.getElementById("stopwatch").innerText = "00:00:00";
-    }
+  function decodeBase64() {
+    const input = document.getElementById("base64-input").value;
+    document.getElementById("base64-output").value = atob(input);
+  }
 
-    let pomodoroTime = 1500, pomodoroInterval;
-    function startPomodoro() {
-      clearInterval(pomodoroInterval);
-      pomodoroInterval = setInterval(() => {
-        if (pomodoroTime <= 0) return;
-        pomodoroTime--;
-        const mins = String(Math.floor(pomodoroTime / 60)).padStart(2, '0');
-        const secs = String(pomodoroTime % 60).padStart(2, '0');
-        document.getElementById("pomodoro").innerText = `${mins}:${secs}`;
-      }, 1000);
-    }
-    function resetPomodoro() {
-      clearInterval(pomodoroInterval);
-      pomodoroTime = 1500;
-      document.getElementById("pomodoro").innerText = "25:00";
-    }
+  // Caesar Cipher
+  function encryptCaesar() {
+    const text = document.getElementById("caesar-input").value;
+    const shift = parseInt(document.getElementById("caesar-shift").value);
+    const result = text.split('').map(char => {
+      let code = char.charCodeAt(0);
+      if (code >= 65 && code <= 90) return String.fromCharCode(((code - 65 + shift) % 26) + 65);
+      else if (code >= 97 && code <= 122) return String.fromCharCode(((code - 97 + shift) % 26) + 97);
+      return char;
+    }).join('');
+    document.getElementById("caesar-output").value = result;
+  }
 
-    const quotes = [
-      "Stay strong, the night is darkest before dawn.",
-      "You are more powerful than you think.",
-      "Every struggle is a step forward.",
-      "Fall down 7 times, get up 8.",
-      "Don't give up. Great things take time."
-    ];
-    function showQuote() {
-      const q = quotes[Math.floor(Math.random() * quotes.length)];
-      document.getElementById("quoteDisplay").innerText = q;
-    }
+  function decryptCaesar() {
+    const text = document.getElementById("caesar-input").value;
+    const shift = parseInt(document.getElementById("caesar-shift").value);
+    const result = text.split('').map(char => {
+      let code = char.charCodeAt(0);
+      if (code >= 65 && code <= 90) return String.fromCharCode(((code - 65 - shift + 26) % 26) + 65);
+      else if (code >= 97 && code <= 122) return String.fromCharCode(((code - 97 - shift + 26) % 26) + 97);
+      return char;
+    }).join('');
+    document.getElementById("caesar-output").value = result;
+  }
 
-    function textToBinary() {
-      const text = document.getElementById("binaryText").value;
-      const result = text.split('').map(char => char.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
-      document.getElementById("binaryResult").innerText = result;
-    }
+  // Stopwatch
+  let stopwatchInterval, seconds = 0;
+  function startStopwatch() {
+    if (stopwatchInterval) return;
+    stopwatchInterval = setInterval(() => {
+      seconds++;
+      const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+      const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      document.getElementById("stopwatch").textContent = `${h}:${m}:${s}`;
+    }, 1000);
+  }
 
-    window.onload = () => {
-      document.getElementById("userAgent").innerText = navigator.userAgent;
-      const savedNote = localStorage.getItem("note");
-      if (savedNote) document.getElementById("noteDisplay").innerText = "Saved: " + savedNote;
-    };
-  </script></body>
-   <her1>�SHADOW JOKER 
+  function stopStopwatch() {
+    clearInterval(stopwatchInterval);
+    stopwatchInterval = null;
+  }
+
+  function resetStopwatch() {
+    stopStopwatch();
+    seconds = 0;
+    document.getElementById("stopwatch").textContent = '00:00:00';
+  }
+
+  // Pomodoro Timer
+  let pomodoroInterval, pomodoroSeconds = 1500;
+  function startPomodoro() {
+    if (pomodoroInterval) return;
+    pomodoroInterval = setInterval(() => {
+      if (pomodoroSeconds > 0) pomodoroSeconds--;
+      const m = String(Math.floor(pomodoroSeconds / 60)).padStart(2, '0');
+      const s = String(pomodoroSeconds % 60).padStart(2, '0');
+      document.getElementById("pomodoro").textContent = `${m}:${s}`;
+    }, 1000);
+  }
+
+  function resetPomodoro() {
+    clearInterval(pomodoroInterval);
+    pomodoroInterval = null;
+    pomodoroSeconds = 1500;
+    document.getElementById("pomodoro").textContent = "25:00";
+  }
+
+  // Binary converter
+  function convertToBinary() {
+    const input = document.getElementById("binary-input").value;
+    const binary = input.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+    document.getElementById("binary-output").value = binary;
+  }
+</script>
+</body>
 </html>
